@@ -44,7 +44,7 @@ module.exports = function (options) {
     }
     else {
       opts.$env = {
-        $DOCKER_HOST: `tcp://<%=$.machine_info.Driver.IPAddress%>:${port}`,
+        $DOCKER_HOST: '$.machine_url',
         DOCKER_TLS_VERIFY: '1',
         $DOCKER_CERT_PATH: '$.machine_info.HostOptions.AuthOptions.StorePath'
       }
@@ -54,6 +54,15 @@ module.exports = function (options) {
         command: 'inspect',
         format: 'json',
         machine: machine
+      }
+      act.$$machine_url = {
+        role: 'docker-machine',
+        cmd: 'info',
+        machine: machine,
+        out$: [{
+          _: 'get',
+          args: 'url'
+        }]
       }
     }
     act.$options = seneca.util.deepextend(msg.options, opts)
